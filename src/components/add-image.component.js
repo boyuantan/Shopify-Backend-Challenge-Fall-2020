@@ -5,10 +5,12 @@ export default class AddImage extends Component {
     super(props);
 
     this.onChangeUsername = this.onChangeUsername.bind(this);
+    this.onChangeFile = this.onChangeFile.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
       images: [],
+      uploadFileName: "Choose file",
     };
   }
 
@@ -32,9 +34,17 @@ export default class AddImage extends Component {
     });
   }
 
+  onChangeFile(e) {
+    console.log("file changed!")
+    const file = document.getElementById('inputGroupFile01').files;
+    this.setState({
+      uploadFileName: file[0].name,
+    })
+  }
+
   onSubmit(e) {
     e.preventDefault();
-    const file = document.getElementById('customFile').files;
+    const file = document.getElementById('inputGroupFile01').files;
     if (file.length == 0) {
       alert("No file selected!");
       return;
@@ -58,25 +68,51 @@ export default class AddImage extends Component {
 
   render() {
     const imgItems = this.state.images.map((fname) =>
-      <img
-        style={{ display: "block" }}
-        src={"http://localhost:5000/images/" + fname}
-      />
+      <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+        <a href={"http://localhost:5000/images/" + fname}>
+          <img
+            src={"http://localhost:5000/images/" + fname}
+            className="img-fluid"/>
+        </a>
+      </div>
     )
 
     return (
       <div className="container">
         <h3>Add New Image</h3>
         <form onSubmit={this.onSubmit}>
-          <div className="custom-file">
-            <input type="file" className="custom-file-input" id="customFile"/>
-            <label className="custom-file-label" htmlFor="customFile">
-              Choose file
-            </label>
+          <div className="form-group">
+            <div className="input-group">
+              <div className="input-group-prepend">
+                <span className="input-group-text" id="inputGroupFileAddon01">
+                  Upload
+                </span>
+              </div>
+              <div className="custom-file">
+                <input
+                  type="file"
+                  className="custom-file-input"
+                  id="inputGroupFile01"
+                  aria-describedby="inputGroupFileAddon01"
+                  onChange={this.onChangeFile}
+                />
+                <label className="custom-file-label" htmlFor="inputGroupFile01">
+                  {this.state.uploadFileName}
+                </label>
+              </div>
+            </div>
           </div>
-          <input type="submit" value="Upload" className="btn btn-primary"/>
+          <div className="form-group">
+            <div className="input-group">
+              <input type="submit" value="Upload Selected Image" className="btn btn-primary"/>
+            </div>
+          </div>
         </form>
-        {imgItems}
+        <div className="container-fluid">
+            <div className="row">
+                {imgItems}
+            </div>
+        </div>
       </div>
     )
   }
