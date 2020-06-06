@@ -29,27 +29,49 @@ export default class AddImage extends Component {
 
   onSubmit(e) {
     e.preventDefault();
+    const file = document.getElementById('customFile').files;
+    const formData = new FormData();
 
-    const image = {
-      username: this.state.username,
-      description: this.state.description,
-      date: this.state.date,
-    };
+    formData.append('img', file[0]);
 
-    console.log(image);
-    window.location = '/';  // Go back to homepage
+    fetch('http://localhost:5000/', {
+      method: 'POST',
+      body: formData,
+    }).then(res => {
+      console.log(res);
+    });
+
+    document
+      .getElementById("img")
+      .setAttribute("src", `http://localhost:5000/${file[0].name}`);
+
+    console.log(file[0]);
+
+    // const image = {
+    //   username: this.state.username,
+    //   description: this.state.description,
+    //   date: this.state.date,
+    // };
+    //
+    // console.log(image);
+    // window.location = '/';  // Go back to homepage
   }
 
   render() {
     return (
-      <div>
+      <div className="container">
         <h3>Add New Image</h3>
-        <form onSubmit="onSubmit">
-          <div class="custom-file">
-            <input type="file" class="custom-file-input" id="customFile"/>
-            <label class="custom-file-label" for="customFile">Choose file</label>
+        <form onSubmit={this.onSubmit}>
+          <div className="custom-file">
+            <input type="file" className="custom-file-input" id="customFile"/>
+            <label className="custom-file-label" htmlFor="customFile">
+              Choose file
+            </label>
           </div>
+          <input type="submit" value="Upload" className="btn btn-primary"/>
         </form>
+
+        <img id="img" style={{ display: "block" }}/>
       </div>
     )
   }
