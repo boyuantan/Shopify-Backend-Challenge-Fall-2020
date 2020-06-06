@@ -8,16 +8,21 @@ export default class AddImage extends Component {
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
-      username: '',
-      description: '',
-      date: new Date(),
+      images: [],
     };
   }
 
   componentDidMount() {
     // Automatically called before anything displays on page
-    this.setState({
-      username: 'test user'
+    fetch('http://localhost:5000/images', {
+      method: 'GET',
+    }).then(res => {
+      res.json().then(imgInfo => {
+        console.log(imgInfo);
+        this.setState({
+          images: imgInfo,
+        });
+      });
     });
   }
 
@@ -30,34 +35,35 @@ export default class AddImage extends Component {
   onSubmit(e) {
     e.preventDefault();
     const file = document.getElementById('customFile').files;
-    const formData = new FormData();
+    if (file.length == 0) {
+      alert("No file selected!");
+      return;
+    }
 
+    const formData = new FormData();
     formData.append('img', file[0]);
+
+    const fname = file[0].name;
 
     fetch('http://localhost:5000/', {
       method: 'POST',
       body: formData,
     }).then(res => {
-      console.log(res);
+      this.setState(prevState => ({
+        images: [...prevState.images, fname],
+      }));
     });
 
-    document
-      .getElementById("img")
-      .setAttribute("src", `http://localhost:5000/${file[0].name}`);
-
-    console.log(file[0]);
-
-    // const image = {
-    //   username: this.state.username,
-    //   description: this.state.description,
-    //   date: this.state.date,
-    // };
-    //
-    // console.log(image);
-    // window.location = '/';  // Go back to homepage
   }
 
   render() {
+    const imgItems = this.state.images.map((fname) =>
+      <img
+        style={{ display: "block" }}
+        src={"http://localhost:5000/images/" + fname}
+      />
+    )
+
     return (
       <div className="container">
         <h3>Add New Image</h3>
@@ -70,8 +76,7 @@ export default class AddImage extends Component {
           </div>
           <input type="submit" value="Upload" className="btn btn-primary"/>
         </form>
-
-        <img id="img" style={{ display: "block" }}/>
+        {imgItems}
       </div>
     )
   }
