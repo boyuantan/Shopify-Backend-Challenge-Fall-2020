@@ -1,16 +1,39 @@
 const router = require('express').Router();
+const jwt = require('jsonwebtoken');
+
+let Image = require('../models/image.model');
+
+require('dotenv').config();
+
+const jwtKey = process.env.JWT_PRIVATE_KEY;
 
 router.route('/').get((req, res) => {
-  const gfs = req.app.locals.gfs;
-  gfs.files.find().toArray((err, files) => {
-    // Check if file
-    if (!files || files.length == 0) {
-      return res.send([]);  // Send empty array
+  console.log(req.headers);
+  const token = req.cookies.token;
+  console.log("cookies: ", req.cookies);
+  if (token) {
+    var payload;
+    try {
+      payload = jwt.verify(token, jwtKey);
+    } catch (e) {
+      console.log("Didn't work: ", e);
     }
 
-    const fnames = files.map(file => file.filename);
-    return res.send(fnames);
-  });
+    console.log("user details: ", payload);
+  } else {
+    console.log("NO TOKEN FOUND");
+  }
+
+  // const gfs = req.app.locals.gfs;
+  // gfs.files.find().toArray((err, files) => {
+  //   // Check if file
+  //   if (!files || files.length == 0) {
+  //     return res.send([]);  // Send empty array
+  //   }
+  //
+  //   const fnames = files.map(file => file.filename);
+  //   return res.send(fnames);
+  // });
 });
 
 router.route('/:filename').get((req, res) => {

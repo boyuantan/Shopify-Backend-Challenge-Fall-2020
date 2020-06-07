@@ -23,10 +23,12 @@ export default class Login extends Component {
 
     fetch('http://localhost:5000/users/login/', {
       method: 'POST',
+      credentials: 'include',
       headers: {"Content-Type": "application/json"},
       body: body,
     }).then(res => {
       if (res.status === 200) {
+        console.log(res.headers);
         history.push('/');
       } else {
         alert("Login unsuccessful!");

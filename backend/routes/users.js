@@ -74,7 +74,8 @@ router.route('/login').post((req, res) => {
       console.log("token: ", token)
       // maxAge in milliseconds
       res.cookie("token", token, {maxAge: jwtExpirySeconds * 1000});
-      res.end();
+      return res.status(200).send();
+      // res.end();
     });
   });
 });

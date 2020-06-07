@@ -18,6 +18,7 @@ export default class AddImage extends Component {
     // Automatically called before anything displays on page
     fetch('http://localhost:5000/images', {
       method: 'GET',
+      credentials: 'include',
     }).then(res => {
       res.json().then(imgInfo => {
         console.log(imgInfo);
@@ -56,6 +57,7 @@ export default class AddImage extends Component {
 
     fetch('http://localhost:5000/images/', {
       method: 'POST',
+      credentials: 'include',
       body: formData,
     }).then(res => {
       this.setState(prevState => ({
