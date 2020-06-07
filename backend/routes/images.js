@@ -85,15 +85,17 @@ router.route('/').post((req, res) => {
   const upload = req.app.locals.upload.single('img');
   var username = '';
   var isPrivate = false;
+  // console.log("isPrivate: ", req);
 
   getTokenPayload(req, (payload) => {
     if (payload) {
       username = payload.username;
-      isPrivate = true; // TODO: Add field to request body
+      isPrivate = req.body.isPrivate;
     }
 
     upload(req, res, (err) => {
-      console.log(req.file);
+      console.log(req);
+      // console.log(req.file);
       // Upload info about same image to Image repo
       const newImage = new Image({
         username: username,

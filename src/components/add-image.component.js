@@ -55,6 +55,7 @@ export default class AddImage extends Component {
   onSubmit(e) {
     e.preventDefault();
     const file = document.getElementById('inputGroupFile01').files;
+    const isPrivate = document.getElementById('inputCheck').checked;
     if (file.length == 0) {
       alert("No file selected!");
       return;
@@ -62,6 +63,7 @@ export default class AddImage extends Component {
 
     const formData = new FormData();
     formData.append('img', file[0]);
+    formData.append('isPrivate', isPrivate);
 
     const fname = file[0].name;
 
@@ -88,6 +90,28 @@ export default class AddImage extends Component {
       </div>
     )
 
+    let checkbox = (
+      <input
+        className="form-check-input"
+        type="checkbox"
+        value=""
+        id="inputCheck"
+      />
+    );
+
+    if (!this.props.isLoggedIn) {
+      checkbox = (
+        <input
+          className="form-check-input"
+          type="checkbox"
+          value=""
+          checked={false}
+          id="inputCheck"
+          disabled={true}
+        />
+      );
+    }
+
     return (
       <div className="container">
         <h3>Add New Image</h3>
@@ -111,6 +135,14 @@ export default class AddImage extends Component {
                   {this.state.uploadFileName}
                 </label>
               </div>
+            </div>
+          </div>
+          <div className="form-group">
+            <div className="form-check">
+              {checkbox}
+              <label className="form-check-label" htmlFor="inputCheck">
+                Is Private
+              </label>
             </div>
           </div>
           <div className="form-group">
