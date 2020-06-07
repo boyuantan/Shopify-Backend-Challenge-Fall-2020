@@ -4,7 +4,6 @@ import React, { Component } from 'react';
 export default class Login extends Component {
   constructor(props) {
     super(props);
-
     this.onLogin = this.onLogin.bind(this);
     this.onRegister = this.onRegister.bind(this);
 
@@ -29,6 +28,7 @@ export default class Login extends Component {
     }).then(res => {
       if (res.status === 200) {
         console.log(res.headers);
+        this.props.userStatusChanged(true, username);
         history.push('/');
       } else {
         alert("Login unsuccessful!");
