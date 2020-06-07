@@ -7,33 +7,38 @@ require('dotenv').config();
 
 const jwtKey = process.env.JWT_PRIVATE_KEY;
 
-router.route('/').get((req, res) => {
-  console.log(req.headers);
+function getTokenPayload(req) {
   const token = req.cookies.token;
-  console.log("cookies: ", req.cookies);
-  if (token) {
-    var payload;
-    try {
-      payload = jwt.verify(token, jwtKey);
-    } catch (e) {
-      console.log("Didn't work: ", e);
-    }
-
-    console.log("user details: ", payload);
-  } else {
-    console.log("NO TOKEN FOUND");
+  if (!token) return null;
+  var payload;
+  try {
+    payload = jwt.verify(token, jwtKey);
+  } catch (e) {
+    return null;
   }
 
-  // const gfs = req.app.locals.gfs;
-  // gfs.files.find().toArray((err, files) => {
-  //   // Check if file
-  //   if (!files || files.length == 0) {
-  //     return res.send([]);  // Send empty array
-  //   }
-  //
-  //   const fnames = files.map(file => file.filename);
-  //   return res.send(fnames);
-  // });
+  return payload;
+}
+
+router.route('/').get((req, res) => {
+  const payload = getTokenPayload(req);
+  var query = [{ isPrivate: false }];
+  if (payload) {
+    query.push({ username: payload.username });
+  }
+
+  Image.find().or(query)
+    .then(images => {
+      var fnames = [];
+      if (images) {
+        fnames = images.map(image => image.filename);
+      }
+
+      return res.send(fnames);
+    })
+    .catch(err => {
+      return res.status(500).json({ err: err });
+    });
 });
 
 router.route('/:filename').get((req, res) => {
@@ -60,9 +65,30 @@ router.route('/:filename').get((req, res) => {
 });
 
 router.route('/').post((req, res) => {
+  // Not atomic
   const upload = req.app.locals.upload.single('img');
+  var username = '';
+  var isPrivate = false;
+
+  payload = getTokenPayload(req);
+  if (payload) {
+    username = payload.username;
+    isPrivate = true; // TODO: Add field to request body
+  }
+
   upload(req, res, (err) => {
-    res.send(req.files);
+    console.log(req.file);
+    // Upload info about same image to Image repo
+    const newImage = new Image({
+      username: username,
+      fileId: req.file.id,
+      filename: req.file.filename,
+      isPrivate: isPrivate,
+    });
+
+    newImage.save()
+      .then(() => res.json('Image added!'))
+      .catch(err => res.status(500).json('Error: ' + err));
   });
 });
 

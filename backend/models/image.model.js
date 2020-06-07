@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
 const imageSchema = new Schema({
-  userId: ObjectId,
+  username: String, // could be problematic
   fileId: ObjectId,
   filename: String, // could be problematic
   isPrivate: Boolean,
