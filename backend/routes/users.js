@@ -5,35 +5,7 @@ const router = require('express').Router();
 require('dotenv').config();
 
 let User = require('../models/user.model');
-
-// Use random character string as salt
-// var genSalt = function(length) {
-//   return crypto.randomBytes(Math.ceil(length / 2))
-//     .toString('hex')
-//     .slice(0, length);
-// }
-//
-// // Using SHA512
-// var sha512 = function(password, salt) {
-//   var hash = crypto.createHmac('sha512', salt);
-//   hash.update(password);
-//   var value = hash.digest('hex');
-//   return {
-//     salt: salt,
-//     pwdHash: value,
-//   }
-// }
-//
-// function genSaltedHash(password) {
-//   var salt = getRandomString(16);
-//   var passwordData = sha512(password, salt);
-// }
-
-// router.route('/').get((req, res) => {
-//   User.find()
-//     .then(users => res.json(users))
-//     .catch(err => res.status(400).json('Error: ' + err));
-// });
+let BlacklistToken = require('../models/blacklist.model');
 
 const jwtKey = process.env.JWT_PRIVATE_KEY;
 const jwtExpirySeconds = 300;
@@ -49,12 +21,8 @@ router.route('/register').post((req, res) => {
 });
 
 router.route('/login').post((req, res) => {
-  console.log("request: ", req.body);
   const username = req.body.username;
   const password = req.body.password;
-
-  console.log("username: ", username);
-  console.log("password: ", password);
 
   User.findOne({ username: username }, (err, user) => {
     if (!user || err) {
@@ -75,9 +43,21 @@ router.route('/login').post((req, res) => {
       // maxAge in milliseconds
       res.cookie("token", token, {maxAge: jwtExpirySeconds * 1000});
       return res.status(200).send();
-      // res.end();
     });
   });
+});
+
+router.route('/logout').get((req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(200).json('User was not logged in.');
+  }
+
+  // Should probably check for token validity
+  const blacklistToken = new BlacklistToken({ token: token });
+  blacklistToken.save()
+    .then(() => res.json('User successfully logged out.'))
+    .catch(err => res.status(500).json('Error: ' + err));
 });
 
 module.exports = router;
