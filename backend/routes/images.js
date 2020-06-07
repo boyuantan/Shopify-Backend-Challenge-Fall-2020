@@ -36,4 +36,11 @@ router.route('/:filename').get((req, res) => {
   });
 });
 
+router.route('/').post((req, res) => {
+  const upload = req.app.locals.upload.single('img');
+  upload(req, res, (err) => {
+    res.send(req.files);
+  });
+});
+
 module.exports = router;

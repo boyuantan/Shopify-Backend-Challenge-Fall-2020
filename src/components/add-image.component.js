@@ -54,7 +54,7 @@ export default class AddImage extends Component {
 
     const fname = file[0].name;
 
-    fetch('http://localhost:5000/', {
+    fetch('http://localhost:5000/images/', {
       method: 'POST',
       body: formData,
     }).then(res => {

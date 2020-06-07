@@ -54,10 +54,11 @@ const storage = new GridFsStorage({
 })
 
 const upload = multer({ storage });
+app.locals.upload = upload;
 
-app.post('/', upload.single('img'), (req, res, err) => {
-  res.send(req.files);
-});
+// app.post('/', upload.single('img'), (req, res, err) => {
+//   res.send(req.files);
+// });
 
 // app.get('/images/:filename', (req, res) => {
 //   // console.log(req.params.filename);
