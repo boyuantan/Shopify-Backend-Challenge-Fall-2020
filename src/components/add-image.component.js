@@ -35,7 +35,6 @@ export default class AddImage extends Component {
   }
 
   onChangeFile(e) {
-    console.log("file changed!")
     const file = document.getElementById('inputGroupFile01').files;
     this.setState({
       uploadFileName: file[0].name,

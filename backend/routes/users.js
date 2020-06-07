@@ -49,14 +49,19 @@ router.route('/register').post((req, res) => {
 });
 
 router.route('/login').post((req, res) => {
+  console.log("request: ", req.body);
   const username = req.body.username;
   const password = req.body.password;
+
+  console.log("username: ", username);
+  console.log("password: ", password);
 
   User.findOne({ username: username }, (err, user) => {
     if (err) {
       return res.status(401).json('Error: ' + err);
     }
 
+    console.log(user);
     user.comparePassword(password, (err, isMatch) => {
       if (err) return res.status(500).json('Error: ' + err);
       if (!isMatch) return res.status(401).json('Error: Incorrect password!');

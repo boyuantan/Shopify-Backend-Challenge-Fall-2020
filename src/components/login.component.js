@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+
 export default class Login extends Component {
   constructor(props) {
     super(props);
@@ -11,7 +12,24 @@ export default class Login extends Component {
   }
 
   onLogin(e) {
-    console.log("login");
+    const username = document.getElementById('inputUsername').value;
+    const password = document.getElementById('inputPassword').value;
+    const {history} = this.props;
+
+    const body = JSON.stringify({
+      username: username,
+      password: password,
+    });
+
+    console.log("body: ", body);
+    fetch('http://localhost:5000/users/login/', {
+      method: 'POST',
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    }).then(res => {
+      console.log(res.cookies);
+      history.push('/');
+    });
   }
 
   onRegister(e) {
@@ -39,10 +57,10 @@ export default class Login extends Component {
               id="inputPassword"
               placeholder="Password"/>
           </div>
-          <div class="form-group">
-            <div class="btn-toolbar pull-right">
-              <button type="button" class="btn mr-3 btn-primary" onClick={this.onLogin}>Login</button>
-              <button type="button" class="btn mr-3 btn-success" onClick={this.onRegister}>Register</button>
+          <div className="form-group">
+            <div className="btn-toolbar pull-right">
+              <button type="button" className="btn mr-3 btn-primary" onClick={this.onLogin}>Login</button>
+              <button type="button" className="btn mr-3 btn-success" onClick={this.onRegister}>Register</button>
             </div>
           </div>
         </form>
