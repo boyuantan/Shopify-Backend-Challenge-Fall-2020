@@ -37,7 +37,28 @@ export default class Login extends Component {
   }
 
   onRegister(e) {
-    console.log("register");
+    let username = document.getElementById('inputUsername').value;
+    let password = document.getElementById('inputPassword').value;
+
+    const body = JSON.stringify({
+      username: username,
+      password: password,
+    });
+
+    fetch('http://localhost:5000/users/register/', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    }).then(res => {
+      if (res.status === 200) {
+        username = null;
+        password = null;
+        alert("Registration success; please login.");
+      } else {
+        alert("Registration unsuccessful!");
+      }
+    });
   }
 
   render() {
