@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const router = require('express').Router();
+const getTokenPayload = require('./util');
 
 require('dotenv').config();
 
@@ -18,6 +19,29 @@ router.route('/register').post((req, res) => {
   newUser.save()
     .then(() => res.json('User added!'))
     .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/').get((req, res) => {
+  getTokenPayload(req, (payload) => {
+    if (!payload) {
+      console.log("didn't find payload");
+      return res.status(401).send();
+    }
+
+    const username = payload.username;
+    const password = payload.password;
+
+    User.findOne({ username: username }, (err, user) => {
+      if (!user || err) {
+        console.log("no user found");
+        return res.status(401).send();
+      }
+      
+      return res.status(200).json({
+        username: username,
+      });
+    });
+  });
 });
 
 router.route('/login').post((req, res) => {

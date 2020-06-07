@@ -1,37 +1,38 @@
 const router = require('express').Router();
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
+const getTokenPayload = require('./util');
 
 let Image = require('../models/image.model');
-let BlacklistToken = require('../models/blacklist.model');
+// let BlacklistToken = require('../models/blacklist.model');
 
-require('dotenv').config();
+// require('dotenv').config();
+//
+// const jwtKey = process.env.JWT_PRIVATE_KEY;
 
-const jwtKey = process.env.JWT_PRIVATE_KEY;
-
-function getTokenPayload(req, callback) {
-  const token = req.cookies.token;
-  if (!token) {
-    callback(null);
-    return;
-  }
-
-  BlacklistToken.findOne({ token: token }, (err, blacklistToken) => {
-    if (blacklistToken || err) {
-      callback(null);  // Error or token blacklisted
-      return;
-    }
-
-    var payload;
-    try {
-      payload = jwt.verify(token, jwtKey);
-    } catch (e) {
-      callback(null);
-      return;
-    }
-
-    callback(payload);
-  });
-}
+// function getTokenPayload(req, callback) {
+//   const token = req.cookies.token;
+//   if (!token) {
+//     callback(null);
+//     return;
+//   }
+//
+//   BlacklistToken.findOne({ token: token }, (err, blacklistToken) => {
+//     if (blacklistToken || err) {
+//       callback(null);  // Error or token blacklisted
+//       return;
+//     }
+//
+//     var payload;
+//     try {
+//       payload = jwt.verify(token, jwtKey);
+//     } catch (e) {
+//       callback(null);
+//       return;
+//     }
+//
+//     callback(payload);
+//   });
+// }
 
 router.route('/').get((req, res) => {
   getTokenPayload(req, (payload) => {
@@ -106,7 +107,7 @@ router.route('/').post((req, res) => {
         .catch(err => res.status(500).json('Error: ' + err));
     });
   });
-  
+
   // payload = getTokenPayload(req);
   // if (payload) {
   //   username = payload.username;

@@ -23,6 +23,25 @@ export default class Main extends Component {
     });
   }
 
+  componentDidMount() {
+    // Automatically called before anything displays on page
+    fetch('http://localhost:5000/users/', {
+      method: 'GET',
+      credentials: 'include',
+    }).then(res => {
+      if (res.status === 200) {
+        res.json().then((body) => {
+          this.setState({
+            isLoggedIn: true,
+            username: body.username,
+          });
+        });
+      }
+    });
+  }
+
+  // <Route path="/" exact component={AddImage}/>
+  
   render() {
     return (
       <Router>
@@ -32,7 +51,14 @@ export default class Main extends Component {
           userStatusChanged={this.userStatusChanged}
         />
         <br/>
-        <Route path="/" exact component={AddImage}/>
+        <Route
+          path="/"
+          exact render={(props) =>
+            <AddImage {...props}
+              isLoggedIn={this.state.isLoggedIn}
+            />
+          }
+        />
         <Route
           path="/login"
           render={(props) =>

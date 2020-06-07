@@ -14,8 +14,7 @@ export default class AddImage extends Component {
     };
   }
 
-  componentDidMount() {
-    // Automatically called before anything displays on page
+  updateImgInfo() {
     fetch('http://localhost:5000/images', {
       method: 'GET',
       credentials: 'include',
@@ -27,6 +26,17 @@ export default class AddImage extends Component {
         });
       });
     });
+  }
+
+  componentDidMount() {
+    // Automatically called before anything displays on page
+    this.updateImgInfo();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.isLoggedIn != this.props.isLoggedIn) {
+      this.updateImgInfo();
+    }
   }
 
   onChangeUsername(e) {
