@@ -14,7 +14,7 @@ function App() {
     <Router>
       <Navbar/>
       <br/>
-      <Route path="/upload" component={AddImage}/>
+      <Route path="/" exact component={AddImage}/>
       <Route path="/login" component={Login}/>
     </Router>
   );

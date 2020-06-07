@@ -57,7 +57,7 @@ router.route('/login').post((req, res) => {
   console.log("password: ", password);
 
   User.findOne({ username: username }, (err, user) => {
-    if (err) {
+    if (!user || err) {
       return res.status(401).json('Error: ' + err);
     }
 

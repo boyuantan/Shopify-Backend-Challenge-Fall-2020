@@ -21,14 +21,16 @@ export default class Login extends Component {
       password: password,
     });
 
-    console.log("body: ", body);
     fetch('http://localhost:5000/users/login/', {
       method: 'POST',
       headers: {"Content-Type": "application/json"},
       body: body,
     }).then(res => {
-      console.log(res.cookies);
-      history.push('/');
+      if (res.status === 200) {
+        history.push('/');
+      } else {
+        alert("Login unsuccessful!");
+      }
     });
   }
 
