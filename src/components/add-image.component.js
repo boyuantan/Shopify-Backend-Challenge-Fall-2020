@@ -4,7 +4,6 @@ export default class AddImage extends Component {
   constructor(props) {
     super(props);
 
-    this.onChangeUsername = this.onChangeUsername.bind(this);
     this.onChangeFile = this.onChangeFile.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
@@ -37,12 +36,6 @@ export default class AddImage extends Component {
     if (prevProps.isLoggedIn != this.props.isLoggedIn) {
       this.updateImgInfo();
     }
-  }
-
-  onChangeUsername(e) {
-    this.setState({
-      username: e.target.value
-    });
   }
 
   onChangeFile(e) {
